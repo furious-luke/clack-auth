@@ -1,7 +1,10 @@
 import base64
 from itertools import takewhile
 import json
+import os
 import re
+
+import click
 
 from .utils import gnupg
 
@@ -91,9 +94,9 @@ def parse_signed_value(signed_value):
     }
 
 
-def build_token(email: str) -> str:
+def build_token(email: str, nonce: int | None = None) -> str:
     fingerprint, email = resolve_fingerprint(resolve_email(email))
-    payload = {"email": email, "fingerprint": fingerprint}
+    payload = {"email": email, "fingerprint": fingerprint, "nonce": get_nonce(email, nonce)}
     payload_str = json.dumps(payload)
     signed_value = sign_value(email, payload_str)
     parsed = parse_signed_value(signed_value)
@@ -101,3 +104,42 @@ def build_token(email: str) -> str:
     payload_token = base64.urlsafe_b64encode(payload_str.encode()).decode()
     signature_token = base64.urlsafe_b64encode(parsed["signature"].encode()).decode()
     return ".".join((header_token, payload_token, signature_token))
+
+
+def rebuild_token(token: str, nonce: int) -> str:
+    _, payload_token, _ = token.split('.')
+    payload = json.loads(base64.urlsafe_b64decode(payload_token).decode())
+    email = payload['email']
+    return build_token(email, nonce)
+
+
+def get_nonce(email: str, nonce: int | None) -> int:
+    if nonce is None:
+        nonce = load_nonce(email)
+    save_nonce(email, nonce + 1)
+    return nonce
+
+
+def load_nonce(email: str) -> int:
+    app = click.get_current_context().obj['app']
+    fn = os.path.join(click.get_app_dir(app.name), 'nonce.json')
+    try:
+        with open(fn, 'r') as f:
+            data = json.loads(f.read())
+    except FileNotFoundError:
+        data = {}
+    return data.get(email, 0)
+
+
+def save_nonce(email: str, nonce: int):
+    app = click.get_current_context().obj['app']
+    fn = os.path.join(click.get_app_dir(app.name), 'nonce.json')
+    try:
+        with open(fn, 'r') as f:
+            data = json.loads(f.read())
+    except FileNotFoundError:
+        data = {}
+    data[email] = nonce
+    os.makedirs(click.get_app_dir(app.name), exist_ok=True)
+    with open(fn, 'w') as f:
+        f.write(json.dumps(data))

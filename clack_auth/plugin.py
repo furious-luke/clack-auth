@@ -2,10 +2,13 @@ import click
 from clack import ClackApp
 
 from .auth import build_token, resolve_public_key_by_fingerprint
+from .middleware import NonceMiddleware
 from .errors import RegistrationError
 
 
 def plugin(app: ClackApp):
+    app.add_request_middleware(NonceMiddleware)
+
     @app.main.command()
     @click.argument("email")
     def register(email):
