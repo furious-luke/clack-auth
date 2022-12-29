@@ -1,12 +1,12 @@
 import click
-from clack import ClackApp
+from clickmod import ClickModApp
 
 from .auth import build_token, resolve_public_key_by_fingerprint
 from .middleware import NonceMiddleware
 from .errors import RegistrationError
 
 
-def plugin(app: ClackApp):
+def plugin(app: ClickModApp):
     app.add_request_middleware(NonceMiddleware)
 
     @app.main.command()

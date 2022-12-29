@@ -1,7 +1,7 @@
 [tool.poetry]
-name = "clack_auth"
+name = "clickmod_auth"
 version = "0.1.0"
-description = "Clack authentication plugin."
+description = "ClickMod authentication module."
 authors = ["Luke Hodkinson <furious.luke@gmail.com>"]
 readme = "README.md"
 license = "MIT"
@@ -15,8 +15,8 @@ python-gnupg = "^0.5.0"
 [tool.poetry.dev-dependencies]
 black = "^22.8.0"
 
-[tool.poetry.plugins."clack"]
-auth = "clack_auth.plugin:plugin"
+[tool.poetry.plugins."clickmod"]
+auth = "clickmod_auth.plugin:plugin"
 
 [tool.black]
 line-length = 119

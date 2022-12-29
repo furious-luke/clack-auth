@@ -1,5 +1,5 @@
-from clack.middleware import RequestMiddleware, Request
-from clack.errors import ApiError
+from clickmod.middleware import RequestMiddleware, Request
+from clickmod.errors import ApiError
 
 from .auth import rebuild_token
 

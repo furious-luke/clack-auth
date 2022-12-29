@@ -1,4 +1,4 @@
-from clack import ApiError
+from clickmod import ApiError
 
 
 class RegistrationError(ApiError):
