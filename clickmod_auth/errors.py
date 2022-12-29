@@ -2,6 +2,9 @@ from clickmod import ApiError
 
 
 class RegistrationError(ApiError):
+    def _registration_disabled(self):
+        self.console.print("Registration is currently [red]temporarily disabled[/red].")
+
     def _email_unregistered(self):
         self.console.print(
             "The provided [red]email[/red] has [red]not yet been registered[/red] with the OpenPGP key servers."
