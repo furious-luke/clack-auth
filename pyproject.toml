@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "clickmod_auth"
-version = "0.1.0"
+version = "0.1.1"
 description = "ClickMod authentication module."
 authors = ["Luke Hodkinson <furious.luke@gmail.com>"]
 readme = "README.md"
